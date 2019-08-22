@@ -19,15 +19,17 @@ const users = require('./json/users.json');
  */
 const getUserWithEmail = function(email) {
   let user;
-  for (const userId in users) {
-    user = users[userId];
-    if (user.email.toLowerCase() === email.toLowerCase()) {
-      break;
-    } else {
-      user = null;
-    }
-  }
-  return Promise.resolve(user);
+  const queryString = 'SELECT * from users where email = $1';
+  const values = email;
+  return pool.query(queryString, [values])
+    .then(res => {
+      user = res.rows[0];
+      if (user) {
+        return user;
+      }
+      return null;
+    })
+    .catch(err => console.error('query error', err.stack));
 };
 exports.getUserWithEmail = getUserWithEmail;
 
