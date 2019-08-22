@@ -148,7 +148,7 @@ const getAllProperties = function(options, limit = 10) {
     LIMIT $${queryParams.length};
     `;
   
-  console.log(queryString, queryParams);
+  // console.log(queryString, queryParams);
 
   return db.query(queryString, queryParams)
     .then(res => res.rows);
