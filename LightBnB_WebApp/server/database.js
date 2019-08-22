@@ -1,14 +1,4 @@
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  user: 'vagrant',
-  password: '123',
-  host: 'localhost',
-  database: 'lightbnb'
-});
-
-// const properties = require('./json/properties.json');
-// const users = require('./json/users.json');
+const db = require('./db');
 
 /// Users
 
@@ -21,7 +11,7 @@ const getUserWithEmail = function(email) {
   let user;
   const queryString = 'SELECT * from users where email = $1';
   const values = email;
-  return pool.query(queryString, [values])
+  return db.query(queryString, [values])
     .then(res => {
       user = res.rows[0];
       if (user) {
@@ -42,7 +32,7 @@ const getUserWithId = function(id) {
   let user;
   const queryString = 'SELECT * from users where id = $1';
   const values = id;
-  return pool.query(queryString, [values])
+  return db.query(queryString, [values])
     .then(res => {
       user = res.rows[0];
       if (user) {
@@ -62,7 +52,7 @@ exports.getUserWithId = getUserWithId;
  */
 const addUser =  function(user) {
   const queryString = 'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *;';
-  return pool.query(queryString, [user.name, user.email, user.password])
+  return db.query(queryString, [user.name, user.email, user.password])
     .then(res => res.rows[0])
     .catch(err => console.error('query error', err.stack));
 };
@@ -88,7 +78,7 @@ GROUP BY reservations.id, properties.id
 ORDER BY reservations.start_date
 LIMIT $2;
 `;
-  return pool.query(queryString, [guest_id, limit])
+  return db.query(queryString, [guest_id, limit])
     .then(res => res.rows)
     .catch(err => console.error('query error', err.stack));
   // return getAllProperties(null, 2);
@@ -160,7 +150,7 @@ const getAllProperties = function(options, limit = 10) {
   
   console.log(queryString, queryParams);
 
-  return pool.query(queryString, queryParams)
+  return db.query(queryString, queryParams)
     .then(res => res.rows);
 };
 exports.getAllProperties = getAllProperties;
@@ -173,7 +163,7 @@ exports.getAllProperties = getAllProperties;
  */
 const addProperty = function(property) {
   const queryString = 'INSERT INTO properties (owner_id, title, description, thumbnail_photo_url, cover_photo_url, cost_per_night, parking_spaces, number_of_bathrooms, number_of_bedrooms, country, city, street, province, post_code) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *;';
-  return pool.query(queryString, [property.owner_id, property.title, property.description, property.thumbnail_photo_url, property.cover_photo_url, property.cost_per_night, property.parking_spaces, property.number_of_bathrooms, property.number_of_bedrooms, property.country, property.street, property.city, property.province, property.post_code])
+  return db.query(queryString, [property.owner_id, property.title, property.description, property.thumbnail_photo_url, property.cover_photo_url, property.cost_per_night, property.parking_spaces, property.number_of_bathrooms, property.number_of_bedrooms, property.country, property.street, property.city, property.province, property.post_code])
     .then(res => res.rows)
     .catch(err => console.error('query error', err.stack));
 };
