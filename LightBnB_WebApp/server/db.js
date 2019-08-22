@@ -9,11 +9,11 @@ const pool = new Pool({
 
 module.exports = {
   query: (text, params) => {
+    const start = Date.now();
     return pool.query(text, params)
       .then(res => {
-        const start = Date.now();
-        const duration = Date.now() - start;
-        console.log('executed query', { text, duration, rows: res.rowCount });
+        const duration = Number(Date.now() - start) + 'ms';
+        console.log('executed query', { text, params, duration, rows: res.rowCount });
         return res;
       }).catch(err => console.error('query error', err.stack));
   },
